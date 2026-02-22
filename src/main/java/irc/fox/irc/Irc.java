@@ -20,7 +20,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-
 @Mod("irc")
 public class Irc {
     private static final String SERVER_IP = "127.0.0.1";
