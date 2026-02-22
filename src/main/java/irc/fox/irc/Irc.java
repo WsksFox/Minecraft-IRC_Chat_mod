@@ -23,13 +23,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mod("irc")
 public class Irc {
-    // 配置项
     private static final String SERVER_IP = "127.0.0.1";
     private static final int SERVER_PORT = 6667;
-    private static final long COOLDOWN_MS = 5000; // 5秒冷却
-    private static final int RECONNECT_DELAY = 10000; // 10秒重连延迟
+    private static final long COOLDOWN_MS = 5000;
+    private static final int RECONNECT_DELAY = 10000;
 
-    // 连接状态
     private static Socket socket;
     private static PrintWriter out;
     private static BufferedReader in;
@@ -44,7 +42,6 @@ public class Irc {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        // 延迟连接，等待游戏完全初始化
         new Thread(() -> {
             try {
                 Thread.sleep(10000);
@@ -71,7 +68,6 @@ public class Irc {
 
             socket = new Socket(SERVER_IP, SERVER_PORT);
 
-            // 使用 UTF-8 编码解决中文乱码问题
             out = new PrintWriter(
                     new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8),
                     true
@@ -88,7 +84,7 @@ public class Irc {
                         handleServerMessage(message);
                     }
                 } catch (IOException e) {
-                    System.err.println("IRC接收错误: " + e.getMessage());
+                    System.err.println("IRC Reception error: " + e.getMessage());
                 } finally {
                     closeConnection();
                     isConnected.set(false);
@@ -101,9 +97,9 @@ public class Irc {
             isConnected.set(true);
 
             // 通知玩家连接成功
-            notifyPlayer(Component.literal("§a成功连接到IRC服务器!"));
+            notifyPlayer(Component.literal("§aSuccessfully connected to the IRC server!"));
         } catch (IOException e) {
-            System.err.println("无法连接到IRC服务器: " + e.getMessage());
+            System.err.println("Unable to connect to the IRC server: " + e.getMessage());
             notifyConnectionFailure();
             isConnected.set(false);
         } finally {
@@ -152,8 +148,8 @@ public class Irc {
     }
 
     private void notifyConnectionFailure() {
-        notifyPlayer(Component.literal("§c无法连接到IRC服务器!"));
-        notifyPlayer(Component.literal("§e将在10秒后重试..."));
+        notifyPlayer(Component.literal("§cUnable to connect to the IRC server!"));
+        notifyPlayer(Component.literal("§eAn attempt to reconnect will be made in " + (RECONNECT_DELAY / 1000) + " seconds..."));
 
         // 延迟重试
         new Thread(() -> {
@@ -185,7 +181,7 @@ public class Irc {
 
             // 检查连接状态
             if (!isConnected.get()) {
-                notifyPlayer(Component.literal("§c未连接到IRC服务器! 尝试连接中..."));
+                notifyPlayer(Component.literal("§cNot connected to the IRC server! Attempting to connect..."));
                 connectToServer();
                 return;
             }
@@ -193,7 +189,7 @@ public class Irc {
             // 冷却检查
             long currentTime = System.currentTimeMillis();
             if (currentTime - lastMessageTime < COOLDOWN_MS) {
-                notifyPlayer(Component.literal("§c发言太快了！"));
+                notifyPlayer(Component.literal("§cYou speak too fast.！"));
                 return;
             }
             lastMessageTime = currentTime;
@@ -219,7 +215,7 @@ public class Irc {
             if (out != null) {
                 out.println(uuid + "|" + username + "|" + content);
             } else {
-                notifyPlayer(Component.literal("§cIRC连接已断开，尝试重新连接..."));
+                notifyPlayer(Component.literal("§cIRCConnection has been disconnected, trying to reconnect..."));
                 connectToServer();
             }
         }
