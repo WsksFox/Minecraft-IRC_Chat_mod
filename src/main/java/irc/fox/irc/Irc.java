@@ -118,13 +118,13 @@ public class Irc {
             String content = parts[2];
 
             MutableComponent messageComponent = Component.literal("[IRC]")
-                    .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#00FFFF"))) // 青色
+                    .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#00FFFF")))
                     .append(Component.literal("{" + uuid + "}")
-                            .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#00FF00")))) // 绿色
+                            .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#00FF00"))))
                     .append(Component.literal("<" + username + ">: ")
-                            .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#FFFF00")))) // 黄色
+                            .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#FFFF00"))))
                     .append(Component.literal(content)
-                            .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#FFFFFF")))); // 白色
+                            .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#FFFFFF"))));
 
             player.sendSystemMessage(messageComponent);
         });
