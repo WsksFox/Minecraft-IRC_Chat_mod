@@ -21,13 +21,17 @@ This is an IRC chat mod and its corresponding server for the Forge version 1.20.
 ## How to configure?
 **The mod currently uses hard-coded configurations, and you need to modify the constants in the source code to match your IRC server settings.**
 ### 1. Modify the source code (recommended)
-- Open the `Irc.java` file.
+
+- Open the `Irc.java` and `IRCServer.java` file.
 - Locate the following constants at the top of the class and modify them according to your environment:
 ```java
+// Client:
 private static final String SERVER_IP = "127.0.0.1";      // IRC Server IP
 private static final int SERVER_PORT = 6667;              // IRC Server Port
 private static final long COOLDOWN_MS = 5000;             // Send cooling (milliseconds)
 private static final int RECONNECT_DELAY = 10000;         // Reconnection delay (milliseconds)
+// Server:
+private static final int PORT = 6667;                     // IRC Server Port
 ```
 
 - Recompile the mod.
