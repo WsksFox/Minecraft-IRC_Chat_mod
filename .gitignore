@@ -16,3 +16,5 @@ desktop.ini
 logs/
 *.log
 crash-reports/
+qodana.yaml
+.gitignore
