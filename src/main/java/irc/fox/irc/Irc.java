@@ -95,7 +95,6 @@ public class Irc {
             receiverThread.start();
             isConnected.set(true);
 
-            // 通知玩家连接成功
             notifyPlayer(Component.literal("§aSuccessfully connected to the IRC server!"));
         } catch (IOException e) {
             System.err.println("Unable to connect to the IRC server: " + e.getMessage());
@@ -111,7 +110,6 @@ public class Irc {
             Player player = Minecraft.getInstance().player;
             if (player == null) return;
 
-            // 解析消息: UUID|username|message
             String[] parts = rawMessage.split("\\|", 3);
             if (parts.length != 3) return;
 
@@ -119,7 +117,6 @@ public class Irc {
             String username = parts[1];
             String content = parts[2];
 
-            // 使用样式组件代替§符号
             MutableComponent messageComponent = Component.literal("[IRC]")
                     .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#00FFFF"))) // 青色
                     .append(Component.literal("{" + uuid + "}")
@@ -139,7 +136,6 @@ public class Irc {
             if (in != null) in.close();
             if (socket != null && !socket.isClosed()) socket.close();
         } catch (IOException e) {
-            // 忽略关闭错误
         }
         out = null;
         in = null;
@@ -150,7 +146,6 @@ public class Irc {
         notifyPlayer(Component.literal("§cUnable to connect to the IRC server!"));
         notifyPlayer(Component.literal("§eAn attempt to reconnect will be made in " + (RECONNECT_DELAY / 1000) + " seconds..."));
 
-        // 延迟重试
         new Thread(() -> {
             try {
                 Thread.sleep(RECONNECT_DELAY);
@@ -178,14 +173,12 @@ public class Irc {
             Player player = Minecraft.getInstance().player;
             if (player == null) return;
 
-            // 检查连接状态
             if (!isConnected.get()) {
                 notifyPlayer(Component.literal("§cNot connected to the IRC server! Attempting to connect..."));
                 connectToServer();
                 return;
             }
 
-            // 冷却检查
             long currentTime = System.currentTimeMillis();
             if (currentTime - lastMessageTime < COOLDOWN_MS) {
                 notifyPlayer(Component.literal("§cYou speak too fast.！"));
@@ -193,12 +186,10 @@ public class Irc {
             }
             lastMessageTime = currentTime;
 
-            // 提取消息内容
             String content = message.substring(3);
             UUID uuid = player.getUUID();
             String username = player.getName().getString();
 
-            // 本地显示消息 (使用样式组件)
             MutableComponent localMessage = Component.literal("[IRC]")
                     .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#00FFFF")))
                     .append(Component.literal("{" + uuid + "}")
@@ -210,7 +201,6 @@ public class Irc {
 
             player.sendSystemMessage(localMessage);
 
-            // 发送到IRC服务器 (使用UTF-8编码)
             if (out != null) {
                 out.println(uuid + "|" + username + "|" + content);
             } else {
