@@ -1,124 +1,64 @@
-<<<<<<< HEAD
 # Minecraft IRC Mod
-Features
-Real-Time Cross-Client Chat: Enables bidirectional communication between Minecraft players via a custom IRC server.
-UTF-8 Encoding Support: Fixes Chinese character garbling issues for seamless multilingual chat.
-Color-Coded Messages: Distinct color styling for IRC tags, UUIDs, usernames, and message content for improved readability.
-Automatic Reconnection: Automatically retries connecting to the IRC server (10-second delay) if the connection is lost.
-Anti-Spam Cooldown: 5-second message cooldown to prevent excessive spam in the IRC chat.
-Connection Lifecycle Management: Handles player login/logout events to manage IRC connections gracefully.
-Background Message Handling: Uses daemon threads for asynchronous message reception without blocking the game thread.
-Clean Disconnection: Properly closes connections when the player logs out of Minecraft.
-Building Instructions
-Client (Minecraft Forge Mod)
-Build the client mod using the standard Minecraft Forge Gradle workflow in IntelliJ IDEA:
-Prerequisites
-IntelliJ IDEA (2020.3+ recommended)
-JDK 17 (required for modern Minecraft Forge versions)
-Gradle (compatible with your Forge version; included in the project by default)
-Build Steps
-Clone this repository to your local machine.
-Open IntelliJ IDEA and import the project (select the root directory of the repository).
-Wait for IntelliJ to sync the Gradle project and download all dependencies.
-Build the mod JAR:
-Open the Gradle tool window (View > Tool Windows > Gradle).
-Navigate to Tasks > build > build.
-Run the build task. The compiled JAR will be generated in build/libs/.
-Server (Standalone Java Application)
-The IRC server is a single Java file located in the Server-src directory and requires manual compilation/execution:
-Prerequisites
-JDK 8+ (compatible with the server code)
-Terminal/command line access
-Compilation & Execution
-Navigate to the Server-src directory:
-cd ./Server-src
+This is an IRC chat mod and its corresponding server for the Forge version 1.20.1 of Minecraft.
+## Feature
+- **Bidirectional message bridge**:
+    - Inputting .i <message> within the game will send the message to the IRC server.
+    - Messages from IRC will be displayed in color in the chat bar.
+- **Full UTF-8 support for Chinese characters**:
+    - Use UTF-8 encoding when communicating with IRC to avoid issues with unreadable characters.
+- **Intelligent connection management**:
+    - The player automatically connects to the IRC server when logging in.
+    - Automatic retry after connection failure (default: reconnect after 10 seconds).
+    - Automatically clean up resources when the connection is disconnected.
+- **Color message display**:
+    - [IRC] Prefix: Cyan
+    - Player UUID: Green
+    - Player Name: Yellow
+    - Message content: white
+- **Thread safe**:
+    - Use AtomicBoolean to ensure the correctness of connection status under multithreading, and all UI operations are executed on the main thread of Minecraft.
 
-Compile the IRCServer.java file with UTF-8 encoding:
+## How to configure?
+**The mod currently uses hard-coded configurations, and you need to modify the constants in the source code to match your IRC server settings.**
+### 1. Modify the source code (recommended)
+- Open the `Irc.java` file.
+- Locate the following constants at the top of the class and modify them according to your environment:
+```java
+private static final String SERVER_IP = "127.0.0.1";      // IRC Server IP
+private static final int SERVER_PORT = 6667;              // IRC Server Port
+private static final long COOLDOWN_MS = 5000;             // Send cooling (milliseconds)
+private static final int RECONNECT_DELAY = 10000;         // Reconnection delay (milliseconds)
+```
 
-javac -encoding UTF-8 IRCServer.java
+- Recompile the mod.
 
-Run the compiled server:
+### 2. Custom configuration file (optional)
+- If you wish to adjust configurations without modifying the source code, you can extend the functionality yourself, such as adding a configuration file (e.g., `.toml` or `.json`) that is read during module initialization. The current version does not include this feature, but you can implement it yourself as needed.
 
-java IRCServer
+### Instructions for use
+- 1.Ensure that the corresponding version of Minecraft Forge has been installed.
+- 2.Place the compiled mod into the `mods` folder.
+- 3.Start the game and enter the world or server.
+- 4.Type `.i Hello, IRC!` in the chat bar, and the message will be sent to the IRC server.
+- 6.When there are new messages in the IRC, they will be automatically displayed within the game.
 
-The server will start on port 6667 (default) and listen for incoming client connections.
-Usage
-1. Start the IRC Server
-Run the compiled IRC server first (follow the server build steps above).
-The default server address is 127.0.0.1:6667 (modify SERVER_IP/SERVER_PORT in Irc.java (client) or PORT in IRCServer.java (server) to use a different address/port).
-2. Install & Run the Client Mod
-Place the compiled client mod JAR into your Minecraft Forge mod folder (typically .minecraft/mods).
-Launch Minecraft with the corresponding Forge version.
-The mod will auto-connect to the IRC server 10 seconds after game initialization (or when the player logs in).
-3. Send IRC Messages
-In Minecraft chat, prefix your message with .i (e.g., .i Hello from Minecraft!) to send it to the IRC server.
-Incoming messages from other clients will appear in the game chat with color coding.
-A 5-second cooldown applies to message sending (you’ll see a warning if you send messages too quickly).
-Notes
-Ensure the IRC server is running before launching the Minecraft client to avoid connection errors.
-The mod uses the Minecraft Forge event bus to handle chat, player login/logout, and tick events.
-Connection status and errors are displayed as system messages in the Minecraft chat.
-License
-This project is unlicensed (modify as needed for your use case, e.g., MIT, GPL).# Minecraft IRC ModA Minecraft Forge mod that implements real-time IRC (Internet Relay Chat) communication between Minecraft clients and a custom standalone IRC server, enabling cross-client chat with robust connection management and encoding support.
-Features
-Real-Time Cross-Client Chat: Enables bidirectional communication between Minecraft players via a custom IRC server.
-UTF-8 Encoding Support: Fixes Chinese character garbling issues for seamless multilingual chat.
-Color-Coded Messages: Distinct color styling for IRC tags, UUIDs, usernames, and message content for improved readability.
-Automatic Reconnection: Automatically retries connecting to the IRC server (10-second delay) if the connection is lost.
-Anti-Spam Cooldown: 5-second message cooldown to prevent excessive spam in the IRC chat.
-Connection Lifecycle Management: Handles player login/logout events to manage IRC connections gracefully.
-Background Message Handling: Uses daemon threads for asynchronous message reception without blocking the game thread.
-Clean Disconnection: Properly closes connections when the player logs out of Minecraft.
-Building Instructions
-Client (Minecraft Forge Mod)
-Build the client mod using the standard Minecraft Forge Gradle workflow in IntelliJ IDEA:
-Prerequisites
-IntelliJ IDEA (2020.3+ recommended)
-JDK 17 (required for modern Minecraft Forge versions)
-Gradle (compatible with your Forge version; included in the project by default)
-Build Steps
-Clone this repository to your local machine.
-Open IntelliJ IDEA and import the project (select the root directory of the repository).
-Wait for IntelliJ to sync the Gradle project and download all dependencies.
-Build the mod JAR:
-Open the Gradle tool window (View > Tool Windows > Gradle).
-Navigate to Tasks > build > build.
-Run the build task. The compiled JAR will be generated in build/libs/.
-Server (Standalone Java Application)
-The IRC server is a single Java file located in the Server-src directory and requires manual compilation/execution:
-Prerequisites
-JDK 8+ (compatible with the server code)
-Terminal/command line access
-Compilation & Execution
-Navigate to the Server-src directory:
+## How to build?
+### Client
+```bash
+# Clone the project
+git clone https://github.com/WsksFox/Minecraft-IRC_Chat_mod.git
+cd Minecraft-IRC_Chat_mod
 
-cd /path/to/your/project/Server-src
-Compile the IRCServer.java file with UTF-8 encoding:
+# Build the project
+./gradlew build
+```
 
-javac -encoding UTF-8 IRCServer.java
+### Server
+```bash
+cd Server-src
+javac -d bin IRCServer.java
+jar cfm Server.jar Manifest.txt -C bin/ .
+```
 
-Run the compiled server:
-
-java IRCServer
-
-The server will start on port 6667 (default) and listen for incoming client connections.
-Usage
-1. Start the IRC Server
-Run the compiled IRC server first (follow the server build steps above).
-The default server address is 127.0.0.1:6667 (modify SERVER_IP/SERVER_PORT in Irc.java (client) or PORT in IRCServer.java (server) to use a different address/port).
-2. Install & Run the Client Mod
-Place the compiled client mod JAR into your Minecraft Forge mod folder (typically .minecraft/mods).
-Launch Minecraft with the corresponding Forge version.
-The mod will auto-connect to the IRC server 10 seconds after game initialization (or when the player logs in).
-3. Send IRC Messages
-In Minecraft chat, prefix your message with .i (e.g., .i Hello from Minecraft!) to send it to the IRC server.
-Incoming messages from other clients will appear in the game chat with color coding.
-A 5-second cooldown applies to message sending (you’ll see a warning if you send messages too quickly).
-Notes
-Ensure the IRC server is running before launching the Minecraft client to avoid connection errors.
-The mod uses the Minecraft Forge event bus to handle chat, player login/logout, and tick events.
-Connection status and errors are displayed as system messages in the Minecraft chat.
-=======
-# Minecraft-IRC_Chat_mod
-An IRC chat mod for Minecraft Forge 1.20.1
->>>>>>> a7d9ce8ef20fa0d0fc1b7d993ea5bbf2a4a9cbee
+## License
+This project is open-sourced under the [Apache License 2.0](https://github.com/WsksFox/Minecraft-IRC_Chat_mod/blob/master/LICENSE).
